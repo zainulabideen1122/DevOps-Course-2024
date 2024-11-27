@@ -1,0 +1,91 @@
+.coinHeader
+{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-size: 1rem;
+    background-color: rgba(128, 128, 128, 0.342);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    width: 50%;
+    margin-left: 25%;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+}
+
+.coinHeader img{
+    width: 25%;
+    margin-right: 10px;
+}
+
+.coinHeader h1{
+    font-size: 1rem;
+}
+.coinHeader h3{
+    font-size: 1rem;
+}
+.red
+{
+    color: red;
+}
+.green 
+{
+    color: green;
+}
+
+.searchBar
+{
+    margin: 2rem 0 4rem;
+}
+
+.searchBar label
+{
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: sans-serif;
+    margin-right: 10px;
+}
+
+.searchBar input
+{
+    font-size: 1rem;
+    padding: 0.5rem;
+
+}
+
+.navbar
+{
+    /* display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid red;
+    width: 50%;
+    margin-left: 25%;
+    text-align: center; */
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    background-color: rgba(128, 128, 128, 0.342);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    width: 50%;
+    margin-left: 25%;
+    text-align: center;
+    
+}
+
+.navbar li{
+    font-size:1.1rem ;
+    font-family: sans-serif;
+    font-weight: bold;
+    list-style-type:none ;
+}

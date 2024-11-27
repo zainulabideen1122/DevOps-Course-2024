@@ -1,70 +1,171 @@
-# Getting Started with Create React App
+# Deploying a Cryptocurrency React App on Kubernetes using Minikube
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project demonstrates how to transition a React app from basic code to containers and deploy it on a Kubernetes cluster using Minikube.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Tech Stack & Tools
 
-### `npm start`
+- **React**: Frontend framework to build the app
+- **Docker**: Containerization tool to create the Docker image
+- **Kubernetes**: Container orchestration platform
+- **kubectl**: Command-line tool for Kubernetes
+- **Minikube**: Local Kubernetes cluster setup
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setting Up the React App ⚛
 
-### `npm test`
+### 1. Create the React App 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Run the following command to create a new React app:
 
-### `npm run build`
+```bash
+npx create-react-app client
+```
+I will be deploying this CryptoCurrency React App: <a href="https://github.com/zainulabideen1122/React-Cryptocurrency-App/tree/master">App</a>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Start the React App
+Run the following command to start the React app:
+```bash
+npm start
+```
+## Containerizing with Docker 🐋
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Create a Dockerfile
+In the root folder, Create the DockerFile using this command:
+```bash
+touch Dockerfile
+```
+### 2. Add this code to docker file:
+```bash
+# Use an official Node runtime as a base image
+FROM node:14-alpine
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-### `npm run eject`
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Install app dependencies
+RUN npm install
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Copy the app's source code to the working directory
+COPY . .
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Expose the port that the app will run on
+EXPOSE 3000
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Define the command to run your app
+CMD ["npm", "start"]
+```
+### 3. Build the Docker Image
+Build the Docker image using the following command:
+```bash
+docker build -t k8s-react .
+```
 
-## Learn More
+### 4. Test the Docker Image Locally
+Run the image locally to ensure it works:
+```bash
+docker run -p 3000:3000 k8s-react
+```
+Check in your browser at **localhost:3000** 
+![image](https://github.com/user-attachments/assets/87cf91eb-1809-4213-8506-f711470ae2bb)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 5. Push the Docker Image to Docker Hub
+Tag and push the image to Docker Hub:
+```bash
+docker tag k8s-react:latest your-dockerhub-username/my-react-app:latest
+docker push your-dockerhub-username/my-react-app:latest
+```
+## Deploying to Kubernetes ☸️
+### 1. Install kubectl & Minikube
+Follow these guides to install the tools:
+- <a href="https://kubernetes.io/docs/tasks/tools/">Install Kubectl</a>
+- <a href="https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download">Install Kubectl</a>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 2. Start Minikube
+Start the Minikube cluster:
+```bash
+minikube start
+```
+### 3. Create Deployment YAML
+Create a deploy.yaml file:
+```bash
+touch deploy.yaml
+```
 
-### Code Splitting
+**Add the following configuration:**
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: react-app
+  template:
+    metadata:
+      labels:
+        app: react-app
+    spec:
+      containers:
+        - name: react-app
+          image: your-dockerhub-username/my-react-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 4. Create Service YAML
+Create a service.yaml file:
+```bash
+touch service.yaml
+```
+**Add the following configuration:**
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-app
+spec:
+  type: NodePort
+  selector:
+    app: react-app
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 31000
+```
 
-### Analyzing the Bundle Size
+### 5. Apply YAML Files
+Deploy the React app using the following commands:
+```bash
+kubectl apply -f deploy.yaml
+kubectl apply -f service.yaml
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
+### 6. Verify the Deployment
+Check the status of the pods and nodes:
+```bash
+kubectl get pods
+kubectl get nodes
+```
+### 7. Expose the Service
+Expose the service with the following command:
+```bash
+kubectl expose deployment react-app --type=NodePort --port=3000
+```
+**Access the app in the browser:**
+```bash
+minikube service react-app
+```
+This will open the borwser, where you app will be running<br></br>
+**Note: If window will not be opened, try to access your app at: http://localhost:31000**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

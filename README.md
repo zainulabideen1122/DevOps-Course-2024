@@ -63,7 +63,7 @@ Host networks remove isolation, allowing containers to use the host's network st
 - **Overlay Networks** <br/>
 Overlay networks connect containers across multiple hosts, making them ideal for distributed systems like Docker Swarm or Kubernetes. They enable containers on different machines to communicate as if on the same local network.
 
-Selecting the right Docker network—bridge, host, or overlay—depends on your application’s needs for isolation, scalability, and performance. These networks are the foundation of secure and efficient containerized systems.
+Selecting the right Docker network—bridge, host, or overlay—depends on your application’s needs for isolation, scalability, and performance. These networks are the foundation of secure and efficient containerized systems.<br></br>
 <a name="unique-anchor-name" href="https://medium.com/@zainnsar/a-beginners-guide-to-docker-networking-bridge-host-and-overlay-networks-edc6d50083f2">Read full blog here</a>
 
 ### Blog 2: A Beginner’s Guide to Docker Networking: Bridge, Host, and Overlay Networks
@@ -76,7 +76,8 @@ K3s is a lightweight Kubernetes distribution designed by Rancher Labs for resour
 - Use Cases include IoT management, smart cities, and edge AI applications.
 
 Getting Started involves installing K3s on a master node, adding worker nodes with a token, and deploying applications using Kubernetes commands. K3s is perfect for running Kubernetes on low-resource edge devices.
-
+<br></br>
+<a name="unique-anchor-name" href="https://medium.com/@zainnsar/kubernetes-distributions-for-edge-computing-k3s-5695096c2e65">Read full blog here</a>
 
 ### Blog 3: Deploying a Cryptocurrency React App on Kubernetes Using Minikube
 <a href="https://github.com/zainulabideen1122/DevOps-Course-2024/tree/main/CryptoCurreny-App">Read here</a>
